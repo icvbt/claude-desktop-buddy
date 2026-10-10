@@ -198,6 +198,11 @@ Then rebuild with `pio run -e m5stickc-plus`.
 
 To pair your device with Claude, first enable developer mode (**Help → Troubleshooting → Enable Developer Mode**). Then open the Hardware Buddy window in **Developer → Open Hardware Buddy…**, click **Connect**, and pick your device from the list. On macOS, grant Bluetooth permission when prompted. On Windows, allow Bluetooth access if asked.
 
+<p align="center">
+  <img src="docs/menu.png" alt="Developer → Open Hardware Buddy… menu item" width="420">
+  <img src="docs/hardware-buddy-window.png" alt="Hardware Buddy window with Connect button and folder drop target" width="420">
+</p>
+
 Once paired, the bridge reconnects automatically whenever both sides are awake.
 
 If discovery isn't finding the stick:
