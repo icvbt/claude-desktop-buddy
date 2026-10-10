@@ -1,4 +1,4 @@
-<p align="center">
+ <p align="center">
   <img src="characters/clawdie/sleep.gif" alt="clawdie sleep" width="96">
   <img src="characters/clawdie/idle.gif" alt="clawdie idle" width="96">
   <img src="characters/clawdie/busy.gif" alt="clawdie busy" width="96">
