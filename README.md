@@ -124,7 +124,7 @@ Run each line in **PowerShell**, from a folder you want the project in.
 **1. Clone and switch to the Plus2 branch**
 
 ```powershell
-git clone https://github.com/YOURUSERNAME/claude-desktop-buddy.git
+git clone https://github.com/icvbt/claude-desktop-buddy.git
 cd claude-desktop-buddy
 git checkout clawdie
 ```
