@@ -8,12 +8,6 @@
   <img src="characters/clawdie/heart.gif" alt="clawdie heart" width="96">
 </p>
 
-<p align="center">
-  <img src="https://img.shields.io/badge/M5StickC%20Plus2-ESP32--PICO-ff6b35?style=for-the-badge" alt="M5StickC Plus2">
-  <img src="https://img.shields.io/badge/PlatformIO-Arduino-orange?style=for-the-badge&logo=platformio" alt="PlatformIO">
-  <img src="https://img.shields.io/badge/Claude%20Desktop-Buddy-d97757?style=for-the-badge" alt="Claude Desktop Buddy">
-  <img src="https://img.shields.io/badge/platform-Windows-0078d6?style=for-the-badge&logo=windows" alt="Windows">
-</p>
 
 <h1 align="center">CLAUDE DESKTOP BUDDY · PLUS2 EDITION</h1>
 
