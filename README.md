@@ -73,7 +73,7 @@ Run each line in **PowerShell**, from the project folder.
 
 **1. Clone and switch branch**
 ```powershell
-git clone https://github.com/YOURNAME/claude-desktop-buddy.git
+git clone https://github.com/icvbt/claude-desktop-buddy.git
 cd claude-desktop-buddy
 git checkout m5unified-pr3
 ```
@@ -112,6 +112,69 @@ C:\Users\Lenovo\.platformio\penv\Scripts\python.exe tools\flash_character.py cha
 </details>
 
 ---
+## Pairing
+
+To pair your device with Claude, first enable developer mode (**Help → Troubleshooting → Enable Developer Mode**). Then open the Hardware Buddy window in **Developer → Open Hardware Buddy…**, click **Connect**, and pick your device from the list. On macOS, grant Bluetooth permission when prompted. On Windows, allow Bluetooth access if asked.
+
+Once paired, the bridge reconnects automatically whenever both sides are awake.
+
+If discovery isn't finding the stick:
+
+- Make sure it's awake (press any button).
+- Check the stick's settings menu and confirm Bluetooth is on.
+- Keep the stick within about a metre of the PC, with other Bluetooth devices turned off.
+- If the panel says **Disconnected**, click **Connect** again before sending anything.
+
+**Plus2 note:** Over Bluetooth, large folder transfers timed out on our setup. If a full character pack fails, send it in smaller batches (see [GIF pets](#gif-pets)), or flash it over USB with `tools\flash_character.py`.
+
+## ASCII pets
+
+The default buddy is an ASCII pet. Each of the eighteen species has seven animations: sleep, idle, busy, attention, celebrate, dizzy, and heart. Use **Menu → next pet** to cycle through them, and the choice is saved to the device.
+
+## GIF pets
+
+To use a custom GIF character instead of an ASCII buddy, drag a character pack folder onto the drop target in the Hardware Buddy window. The app streams it over Bluetooth, and the stick switches to GIF mode live. To go back to ASCII, use **Settings → delete char** on the stick.
+
+A character pack is a folder with a `manifest.json` and 96px-wide GIFs, one per state:
+
+```json
+{
+  "name": "clawdie",
+  "colors": {
+    "body": "#D97757",
+    "bg": "#000000",
+    "text": "#FFFFFF",
+    "textDim": "#808080",
+    "ink": "#000000"
+  },
+  "states": {
+    "sleep": "sleep.gif",
+    "idle": "idle.gif",
+    "busy": "busy.gif",
+    "attention": "attention.gif",
+    "celebrate": "celebrate.gif",
+    "dizzy": "dizzy.gif",
+    "heart": "heart.gif"
+  }
+}
+```
+
+A state can also be an array of GIFs. Each loop-end advances to the next file, which keeps the home screen from repeating one clip forever.
+
+GIFs must be **96px wide** and no taller than about **140px**, which fits the 135×240 portrait screen. The whole folder must stay under **1.8 MB**. To shrink a pack, run:
+
+```
+gifsicle --lossy=80 -O3 --colors 64 input.gif -o output.gif
+```
+
+To flash a pack over USB instead of Bluetooth, close Claude Desktop and run:
+
+```
+C:\Users\Lenovo\.platformio\penv\Scripts\python.exe tools\flash_character.py characters\clawdie
+```
+
+See `characters/clawdie/` for a working example.
+
 
 ## Controls
 
