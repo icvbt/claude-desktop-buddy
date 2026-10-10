@@ -8,7 +8,6 @@
   <img src="characters/clawdie/heart.gif" alt="clawdie heart" width="96">
 </p>
 
-
 <h1 align="center">CLAUDE DESKTOP BUDDY · PLUS2 EDITION</h1>
 
 <p align="center">
@@ -17,6 +16,7 @@
 </p>
 
 ---
+
 > This is a fork of [anthropics/claude-desktop-buddy](https://github.com/anthropics/claude-desktop-buddy) adapted for the M5StickC Plus2.
 
 Claude for macOS and Windows can connect Claude Cowork and Claude Code to maker devices over BLE, so developers and makers can build hardware that displays permission prompts, recent messages, and other interactions. We've been impressed by the creativity of the maker community around Claude - providing a lightweight, opt-in API is our way of making it easier to build fun little hardware devices that integrate with Claude.
@@ -71,21 +71,23 @@ PC (USB) ── test_states_win.py┘   fake JSON states for testing
 
 Run each line in **PowerShell**, from the project folder.
 
+**Requirements:** Python 3, [PlatformIO Core](https://docs.platformio.org/en/latest/core/installation/), Git, and an M5StickC Plus2 with a USB-C data cable.
+
 **1. Clone and switch branch**
 ```powershell
-git clone https://github.com/icvbt/claude-desktop-buddy.git
+git clone https://github.com/YOURUSERNAME/claude-desktop-buddy.git
 cd claude-desktop-buddy
-git checkout m5unified-pr3
+git checkout clawdie
 ```
 
 **2. Install Python packages**
 ```powershell
-C:\Users\Lenovo\.platformio\penv\Scripts\python.exe -m pip install pillow pyserial
+python -m pip install pillow pyserial
 ```
 
 **3. Build (checks the toolchain, doesn't flash)**
 ```powershell
-C:\Users\Lenovo\.platformio\penv\Scripts\pio.exe run -e m5stickc-plus
+pio run -e m5stickc-plus
 ```
 
 **4. Flash the firmware**
@@ -93,12 +95,12 @@ C:\Users\Lenovo\.platformio\penv\Scripts\pio.exe run -e m5stickc-plus
 > Close Claude Desktop first, then plug the stick in over USB-C.
 
 ```powershell
-C:\Users\Lenovo\.platformio\penv\Scripts\pio.exe run -e m5stickc-plus -t upload
+pio run -e m5stickc-plus -t upload
 ```
 
 **5. Flash the clawdie pack**
 ```powershell
-C:\Users\Lenovo\.platformio\penv\Scripts\python.exe tools\flash_character.py characters\clawdie
+python tools\flash_character.py characters\clawdie
 ```
 
 > If it starts building `m5stack-sticks3`, press **Ctrl+C**. That's a different board.
@@ -112,6 +114,7 @@ C:\Users\Lenovo\.platformio\penv\Scripts\python.exe tools\flash_character.py cha
 </details>
 
 ---
+
 ## Pairing
 
 To pair your device with Claude, first enable developer mode (**Help → Troubleshooting → Enable Developer Mode**). Then open the Hardware Buddy window in **Developer → Open Hardware Buddy…**, click **Connect**, and pick your device from the list. On macOS, grant Bluetooth permission when prompted. On Windows, allow Bluetooth access if asked.
@@ -170,11 +173,10 @@ gifsicle --lossy=80 -O3 --colors 64 input.gif -o output.gif
 To flash a pack over USB instead of Bluetooth, close Claude Desktop and run:
 
 ```
-C:\Users\Lenovo\.platformio\penv\Scripts\python.exe tools\flash_character.py characters\clawdie
+python tools\flash_character.py characters\clawdie
 ```
 
 See `characters/clawdie/` for a working example.
-
 
 ## Controls
 
@@ -210,7 +212,7 @@ See `characters/clawdie/` for a working example.
 4. Run:
 
 ```powershell
-C:\Users\Lenovo\.platformio\penv\Scripts\python.exe tools\test_states_win.py
+python tools\test_states_win.py
 ```
 
 The stick shows **busy** for 10 seconds, then **attention** for 10 seconds, then the script prints `done`.
@@ -224,7 +226,8 @@ The stick shows **busy** for 10 seconds, then **attention** for 10 seconds, then
 
 | Problem | Fix |
 | --- | --- |
-| `pio` not recognized | Use the full path shown in setup |
+| `pio` not recognized | Add PlatformIO's `Scripts` folder to your PATH, or run `python -m platformio` in its place |
+| `python` not recognized | Install Python 3 and tick "Add to PATH", or use the full path to `python.exe` |
 | `&&` is not a valid separator | Run each command on its own line |
 | `chunk ack timeout` over Bluetooth | Reconnect, keep the stick close, or flash over USB |
 | `Could not resolve host` | `ipconfig /flushdns`, then retry |
