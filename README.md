@@ -67,28 +67,83 @@ PC (USB) ── test_states_win.py┘   fake JSON states for testing
 ---
 
 <details>
+<summary><b>Prerequisites</b></summary>
+
+- **Windows 10 or 11** (the commands below are for PowerShell)
+- **An M5StickC Plus2** and a **USB-C cable that carries data**. Charge-only cables are not detected by PlatformIO.
+- **Claude Desktop** (macOS or Windows), for Bluetooth pairing
+- **Git for Windows**: [git-scm.com/downloads/win](https://git-scm.com/downloads/win)
+- **Python 3.11 or newer**: [python.org/downloads](https://www.python.org/downloads/). During install, tick **Add python.exe to PATH**.
+
+</details>
+
+---
+
+<details>
+<summary><b>Install PlatformIO</b></summary>
+
+PlatformIO is the build and upload tool. Pick one of the two options below.
+
+**Option A: VS Code (easiest)**
+
+1. Install [Visual Studio Code](https://code.visualstudio.com/).
+2. Open **Extensions** (Ctrl+Shift+X), search for **PlatformIO IDE**, and install it.
+3. Restart VS Code. The first start downloads the core packages, which takes a few minutes.
+4. Open the `claude-desktop-buddy` folder with **File → Open Folder**. PlatformIO detects `platformio.ini` automatically.
+
+**Option B: Command line only**
+
+```powershell
+python -m pip install --upgrade platformio
+pio --version
+```
+
+If `pio` is not recognized, the Scripts folder isn't on your PATH. Add it for the current window:
+
+```powershell
+$env:PATH = "$env:USERPROFILE\.platformio\penv\Scripts;" + $env:PATH
+```
+
+To make it permanent, add that folder under **Settings → Environment Variables → Path**. Or skip PATH entirely and run `python -m platformio` in place of `pio`.
+
+Check the install:
+
+```powershell
+pio --version
+```
+
+</details>
+
+---
+
+<details>
 <summary><b>First-Time Setup</b></summary>
 
-Run each line in **PowerShell**, from the project folder.
+Run each line in **PowerShell**, from a folder you want the project in.
 
-**Requirements:** Python 3, [PlatformIO Core](https://docs.platformio.org/en/latest/core/installation/), Git, and an M5StickC Plus2 with a USB-C data cable.
+**1. Clone and switch to the Plus2 branch**
 
-**1. Clone and switch branch**
 ```powershell
 git clone https://github.com/YOURUSERNAME/claude-desktop-buddy.git
 cd claude-desktop-buddy
 git checkout clawdie
 ```
 
-**2. Install Python packages**
+**2. Install the Python packages the tools use**
+
 ```powershell
 python -m pip install pillow pyserial
 ```
 
 **3. Build (checks the toolchain, doesn't flash)**
+
+The first build downloads the ESP32 toolchain and can take several minutes.
+
 ```powershell
 pio run -e m5stickc-plus
 ```
+
+Wait for `[SUCCESS]`.
 
 **4. Flash the firmware**
 
@@ -98,18 +153,46 @@ pio run -e m5stickc-plus
 pio run -e m5stickc-plus -t upload
 ```
 
-**5. Flash the clawdie pack**
+Wait for `[SUCCESS]`, then unplug and replug the stick.
+
+If the stick has old firmware and behaves oddly, wipe it first:
+
+```powershell
+pio run -e m5stickc-plus -t erase
+pio run -e m5stickc-plus -t upload
+```
+
+You can also factory reset from the device: hold **A → Settings → Reset → Factory Reset**, then tap twice to confirm.
+
+**5. Flash the clawdie pack over USB**
+
 ```powershell
 python tools\flash_character.py characters\clawdie
 ```
 
-> If it starts building `m5stack-sticks3`, press **Ctrl+C**. That's a different board.
+> If PlatformIO starts building `m5stack-sticks3`, press **Ctrl+C**. That's a different board, and you don't need it.
 
 **6. Pair with Claude Desktop**
 
-1. **Help → Troubleshooting → Enable Developer Mode**
-2. **Developer → Open Hardware Buddy**
-3. Click **Connect** and pick the stick
+1. In Claude Desktop, go to **Help → Troubleshooting → Enable Developer Mode**.
+2. Go to **Developer → Open Hardware Buddy**.
+3. Click **Connect** and pick the stick from the list.
+4. Grant Bluetooth permission if Windows asks.
+
+</details>
+
+---
+
+<details>
+<summary><b>Pin the ESP32 platform version (optional)</b></summary>
+
+PlatformIO updates the ESP32 platform automatically. A newer release can occasionally break a working build. If that happens, open `platformio.ini`, find the `[env:m5stickc-plus]` section, and set the platform to the version this project was built with:
+
+```ini
+platform = espressif32@7.1.3
+```
+
+Then rebuild with `pio run -e m5stickc-plus`.
 
 </details>
 
@@ -129,6 +212,17 @@ If discovery isn't finding the stick:
 - If the panel says **Disconnected**, click **Connect** again before sending anything.
 
 **Plus2 note:** Over Bluetooth, large folder transfers timed out on our setup. If a full character pack fails, send it in smaller batches (see [GIF pets](#gif-pets)), or flash it over USB with `tools\flash_character.py`.
+
+## Controls
+
+| Button | Normal | Approval |
+| --- | --- | --- |
+| **A** (front) | Next screen | Approve |
+| **B** (right) | Next page | Deny |
+| **Hold A** | Settings | Settings |
+| **Power** (short) | Screen off | — |
+
+The screen turns off after 30 seconds of inactivity and stays on while an approval is waiting. Any button press wakes it.
 
 ## ASCII pets
 
@@ -164,28 +258,15 @@ A character pack is a folder with a `manifest.json` and 96px-wide GIFs, one per 
 
 A state can also be an array of GIFs. Each loop-end advances to the next file, which keeps the home screen from repeating one clip forever.
 
-GIFs must be **96px wide** and no taller than about **140px**, which fits the 135×240 portrait screen. The whole folder must stay under **1.8 MB**. To shrink a pack, run:
+**Tips for making character packs:**
 
-```
-gifsicle --lossy=80 -O3 --colors 64 input.gif -o output.gif
-```
-
-To flash a pack over USB instead of Bluetooth, close Claude Desktop and run:
-
-```
-python tools\flash_character.py characters\clawdie
-```
+- GIFs must be **96px wide** and no taller than about **140px**, which fits the 135×240 portrait screen.
+- The whole folder must stay under **1.8 MB**.
+- Compress with `gifsicle --lossy=80 -O3 --colors 64 input.gif -o output.gif`. It usually cuts the size by 40–60%.
+- `tools/prep_character.py` resizes source GIFs to the right width, keeping the character at the same scale in every state.
+- To flash a pack over USB instead of Bluetooth, close Claude Desktop and run `python tools\flash_character.py characters\clawdie`.
 
 See `characters/clawdie/` for a working example.
-
-## Controls
-
-| Button | Normal | Approval |
-| --- | --- | --- |
-| **A** (front) | Next screen | Approve |
-| **B** (right) | Next page | Deny |
-| **Hold A** | Settings | Settings |
-| **Power** (short) | Screen off | — |
 
 ---
 
@@ -207,8 +288,8 @@ See `characters/clawdie/` for a working example.
 <summary><b>Test Without Claude</b></summary>
 
 1. Close Claude Desktop, or disconnect Hardware Buddy.
-2. Find the stick's COM port in **Device Manager**.
-3. Set `PORT` at the top of `tools\test_states_win.py`.
+2. Find the stick's COM port in **Device Manager** (under **Ports (COM & LPT)**).
+3. Set `PORT` at the top of `tools\test_states_win.py` to match.
 4. Run:
 
 ```powershell
@@ -226,13 +307,15 @@ The stick shows **busy** for 10 seconds, then **attention** for 10 seconds, then
 
 | Problem | Fix |
 | --- | --- |
-| `pio` not recognized | Add PlatformIO's `Scripts` folder to your PATH, or run `python -m platformio` in its place |
-| `python` not recognized | Install Python 3 and tick "Add to PATH", or use the full path to `python.exe` |
+| `pio` not recognized | Add `%USERPROFILE%\.platformio\penv\Scripts` to PATH, or use `python -m platformio` |
+| `python` not recognized | Reinstall Python and tick **Add python.exe to PATH** |
 | `&&` is not a valid separator | Run each command on its own line |
+| Upload fails or the port isn't found | Use a data-capable USB-C cable, close Claude Desktop, and replug the stick |
+| Stick shows old firmware or won't boot after a flash | Run the erase and upload commands in step 4 |
 | `chunk ack timeout` over Bluetooth | Reconnect, keep the stick close, or flash over USB |
-| `Could not resolve host` | `ipconfig /flushdns`, then retry |
-| `git push` returns HTTP 408 | `git config http.postBuffer 524288000`, then push again |
-| Low disk space | `pio run -t clean`, then `pio system prune` |
+| `Could not resolve host` | Run `ipconfig /flushdns`, then retry |
+| `git push` returns HTTP 408 | Run `git config http.postBuffer 524288000`, then push again |
+| Low disk space | Run `pio run -t clean`, then `pio system prune` |
 
 </details>
 
@@ -246,4 +329,5 @@ The stick shows **busy** for 10 seconds, then **attention** for 10 seconds, then
 
 - Firmware base: [anthropics/claude-desktop-buddy](https://github.com/anthropics/claude-desktop-buddy)
 - Clawdie sprite: adapted from [bryant24hao/deskpet-firmware](https://github.com/bryant24hao/deskpet-firmware)
+- Setup steps adapted from the [OpenELAB StickS3 tutorial](https://www.hackster.io/openelab/claude-desktop-buddy-tutorial-sticks3-cardputer-48f922)
 - Built with help from Claude (Anthropic).
