@@ -1,8 +1,11 @@
 <p align="center">
+  <img src="characters/clawdie/sleep.gif" alt="clawdie sleep" width="96">
   <img src="characters/clawdie/idle.gif" alt="clawdie idle" width="96">
   <img src="characters/clawdie/busy.gif" alt="clawdie busy" width="96">
   <img src="characters/clawdie/attention.gif" alt="clawdie attention" width="96">
   <img src="characters/clawdie/celebrate.gif" alt="clawdie celebrate" width="96">
+  <img src="characters/clawdie/dizzy.gif" alt="clawdie dizzy" width="96">
+  <img src="characters/clawdie/heart.gif" alt="clawdie heart" width="96">
 </p>
 
 <p align="center">
@@ -20,7 +23,6 @@
 </p>
 
 ---
-
 ## What's Here
 
 ```
