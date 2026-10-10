@@ -1,4 +1,4 @@
-#include <M5Unified.h>
+﻿#include <M5Unified.h>
 #include <LittleFS.h>
 #include <stdarg.h>
 #include "ble_bridge.h"
@@ -48,7 +48,7 @@ unsigned long t = 0;
 // Menu
 bool    menuOpen    = false;
 uint8_t menuSel     = 0;
-uint8_t brightLevel = 4;           // 0..4 → ScreenBreath 20..100
+uint8_t brightLevel = 4;           // 0..4 â†’ ScreenBreath 20..100
 bool    btnALong    = false;
 
 enum DisplayMode { DISP_NORMAL, DISP_PET, DISP_INFO, DISP_COUNT };
@@ -68,18 +68,18 @@ bool     buddyMode = false;
 bool     gifAvailable = false;
 const uint8_t SPECIES_GIF = 0xFF;   // species NVS sentinel: use the installed GIF
 
-// Cycle GIF (if installed) → ASCII species 0..N-1 → GIF. Persisted to the
+// Cycle GIF (if installed) â†’ ASCII species 0..N-1 â†’ GIF. Persisted to the
 // existing "species" NVS key; 0xFF means GIF mode.
 static void nextPet() {
   uint8_t n = buddySpeciesCount();
-  if (!buddyMode) {                          // GIF → species 0
+  if (!buddyMode) {                          // GIF â†’ species 0
     buddyMode = true;
     buddySetSpeciesIdx(0);
     speciesIdxSave(0);
-  } else if (buddySpeciesIdx() + 1 >= n && gifAvailable) {  // last species → GIF
+  } else if (buddySpeciesIdx() + 1 >= n && gifAvailable) {  // last species â†’ GIF
     buddyMode = false;
     speciesIdxSave(SPECIES_GIF);
-  } else {                                   // species i → species i+1
+  } else {                                   // species i â†’ species i+1
     buddyNextSpecies();
   }
   characterInvalidate();
@@ -165,13 +165,13 @@ static void applySetting(uint8_t idx) {
       return;
     case 1: s.sound = !s.sound; break;
     case 2:
-      // BT toggle is a stored preference only — BLE stays live. Turning
+      // BT toggle is a stored preference only â€” BLE stays live. Turning
       // BLE off cleanly would require tearing down the BLE stack which
       // the Arduino BLE library doesn't do reliably. If we need a
       // hard-off someday, stop advertising via BLEDevice::getAdvertising().
       s.bt = !s.bt;
       break;
-    case 3: s.wifi = !s.wifi; break;   // stored only — no WiFi stack linked
+    case 3: s.wifi = !s.wifi; break;   // stored only â€” no WiFi stack linked
     case 4: s.led = !s.led; break;
     case 5: s.hud = !s.hud; break;
     case 6: s.clockRot = (s.clockRot + 1) % 3; break;
@@ -237,7 +237,7 @@ static void applyReset(uint8_t idx) {
   ESP.restart();
 }
 
-// Footer hint row inside a menu panel: "<downLbl> ↓  <rightLbl> →" with
+// Footer hint row inside a menu panel: "<downLbl> â†“  <rightLbl> â†’" with
 // pixel triangles. Panels add MENU_HINT_H to height and call this at bottom.
 const int MENU_HINT_H = 14;
 static void drawMenuHints(const Palette& p, int mx, int mw, int hy,
@@ -345,7 +345,7 @@ void drawMenu() {
 }
 
 // Clock orientation: gravity along the in-plane X axis means the stick is
-// on its side. Signed counter for hysteresis on both transitions — same
+// on its side. Signed counter for hysteresis on both transitions â€” same
 // pattern as face-down nap.
 //   0 = portrait (sprite path, pet sleeps underneath)
 //   1 = landscape, BtnA-side down (M5.Lcd rotation 1)
@@ -354,7 +354,7 @@ static uint8_t clockOrient   = 0;
 static int8_t  orientFrames  = 0;
 static uint8_t paintedOrient = 0;
 // RTC and IMU share an I2C bus. Reading the RTC at 60fps starves the IMU
-// reads in clockUpdateOrient — orientation detection gets noisy. Cache the
+// reads in clockUpdateOrient â€” orientation detection gets noisy. Cache the
 // time once per second; mood logic and drawClock both read from here.
 static m5::rtc_time_t _clkTm;
 static m5::rtc_date_t _clkDt;
@@ -489,7 +489,7 @@ static void clockUpdateOrient() {
   if (lock == 2) {
     // Locked landscape: never drop to 0, but still pick 1 vs 3 from
     // gravity so the cradle works either way up. Need a strong tilt
-    // for the 1↔3 swap so handling jitter doesn't flip it; otherwise
+    // for the 1â†”3 swap so handling jitter doesn't flip it; otherwise
     // hold whatever we last had (or 1 from boot).
     if (clockOrient == 0) clockOrient = (sideAxis >= 0) ? 1 : 3;
     if      (sideAxis >  0.5f && clockOrient != 1) clockOrient = 1;
@@ -497,7 +497,7 @@ static void clockUpdateOrient() {
     return;
   }
   // Dual threshold: strict to enter (must be clearly sideways), loose to
-  // stay (tolerate ~65° of tilt). With one shared threshold a slight lean
+  // stay (tolerate ~65Â° of tilt). With one shared threshold a slight lean
   // while sitting on the long edge puts ax right at the boundary and the
   // counter ratchets down in ~half a second.
   bool side = (clockOrient == 0)
@@ -510,7 +510,7 @@ static void clockUpdateOrient() {
   } else if (clockOrient != 0 && orientFrames <= -8) {
     clockOrient = 0;
   } else if (clockOrient != 0 && side) {
-    // Direct 1↔3: a fast flip keeps |ax|>0.7 (just changes sign), so
+    // Direct 1â†”3: a fast flip keeps |ax|>0.7 (just changes sign), so
     // `side` never drops and the exit-via-0 path can't fire. Watch for
     // side-axis sign disagreeing with the stored orientation.
     static int8_t swapFrames = 0;
@@ -522,7 +522,7 @@ static void clockUpdateOrient() {
 
 // Clock face: shown when charging on USB with nothing else going on.
 // Portrait paints the upper ~110px to the sprite; pet renders below.
-// Landscape draws direct to LCD with rotation — sprite stays untouched.
+// Landscape draws direct to LCD with rotation â€” sprite stays untouched.
 static const char* const MON[] = {
   "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"
 };
@@ -533,14 +533,14 @@ static void drawClock() {
   const Palette& p = characterPalette();
   if (!rtcLooksValid()) return;
 
-  char hm[6]; snprintf(hm, sizeof(hm), "%02d:%02d", (int)_clkTm.hours, (int)_clkTm.minutes);
+  char hm[6]; int h12 = _clkTm.hours % 12; if (h12 == 0) h12 = 12; snprintf(hm, sizeof(hm), "%d:%02d", h12, (int)_clkTm.minutes);
   char ss[4]; snprintf(ss, sizeof(ss), ":%02d", (int)_clkTm.seconds);
   uint8_t mi = (_clkDt.month >= 1 && _clkDt.month <= 12) ? _clkDt.month - 1 : 0;
   char dl[8]; snprintf(dl, sizeof(dl), "%s %02d", MON[mi], (int)_clkDt.date);
 
   if (clockOrient == 0) {
     paintedOrient = 0;
-    // Bottom half — buddy naturally lives at y=0..82, GIF peeks at top
+    // Bottom half â€” buddy naturally lives at y=0..82, GIF peeks at top
     // via peek mode. Clearing from 90 leaves both untouched.
     spr.fillRect(0, 90, W, H - 90, p.bg);
     spr.setTextDatum(MC_DATUM);
@@ -551,9 +551,9 @@ static void drawClock() {
     return;
   }
 
-  // Landscape: 240×135 direct-to-LCD. Full fill only on entry; after that
-  // text glyph bg cells repaint themselves and the pet box (small, ~90×50)
-  // gets a fillRect each pet tick — small enough not to tear.
+  // Landscape: 240Ã—135 direct-to-LCD. Full fill only on entry; after that
+  // text glyph bg cells repaint themselves and the pet box (small, ~90Ã—50)
+  // gets a fillRect each pet tick â€” small enough not to tear.
   M5.Lcd.setRotation(clockOrient);
   static uint8_t lastSec = 0xFF;
   bool repaint = paintedOrient != clockOrient;
@@ -574,7 +574,7 @@ static void drawClock() {
   }
 
   // Pet on left at 5 fps. Clear includes the overlay-particle zone above
-  // the body (y<30) — species draw Zzz/hearts there via BUDDY_Y_OVERLAY=6
+  // the body (y<30) â€” species draw Zzz/hearts there via BUDDY_Y_OVERLAY=6
   // which doesn't go through _yb, so the box has to cover it.
   static uint32_t lastPetTick = 0;
   if (millis() - lastPetTick >= 200) {
@@ -582,12 +582,12 @@ static void drawClock() {
     if (buddyMode) {
       // ASCII glyphs don't self-clear; wipe the box each tick. Species
       // hardcode BUDDY_X_CENTER=67 / BUDDY_Y_OVERLAY=6 for particles so
-      // keep portrait coords and just swap the surface — pet lands
+      // keep portrait coords and just swap the surface â€” pet lands
       // upper-left of landscape, which is where we want it anyway.
       M5.Lcd.fillRect(0, 0, 115, 90, p.bg);
       buddyRenderTo(&M5.Lcd, activeState);
     } else {
-      // Full-frame GIFs paint every pixel (transparent → pal.bg), so a
+      // Full-frame GIFs paint every pixel (transparent â†’ pal.bg), so a
       // per-tick clear just adds a visible black flash between wipe and
       // last scanline. The entry fillScreen on paintedOrient change
       // already covers the surround.
@@ -603,7 +603,7 @@ PersonaState derive(const TamaState& s) {
   if (s.sessionsWaiting > 0)   return P_ATTENTION;
   if (s.recentlyCompleted)     return P_CELEBRATE;
   if (s.sessionsRunning >= 3)  return P_BUSY;
-  return P_IDLE;   // connected, 0+ sessions, nothing urgent — hang out
+  return P_IDLE;   // connected, 0+ sessions, nothing urgent â€” hang out
 }
 
 void triggerOneShot(PersonaState s, uint32_t durMs) {
@@ -993,7 +993,7 @@ void drawPet() {
   if (petPage == 0) drawPetStats(p);
   else drawPetHowTo(p);
 
-  // Header on top of whichever page drew — title left, counter right
+  // Header on top of whichever page drew â€” title left, counter right
   spr.setTextSize(1);
   spr.setTextColor(p.text, p.bg);
   spr.setCursor(4, y + 2);
@@ -1094,7 +1094,7 @@ void setup() {
       spr.setTextColor(p.text, p.bg);   spr.drawString(line, W/2, H/2 - 12);
       spr.setTextColor(p.body, p.bg);   spr.drawString(petName(), W/2, H/2 + 12);
     } else {
-      // First boot, no owner pushed yet — say hi.
+      // First boot, no owner pushed yet â€” say hi.
       spr.setTextColor(p.body, p.bg);   spr.drawString("Hello!", W/2, H/2 - 12);
       spr.setTextSize(1);
       spr.setTextColor(p.textDim, p.bg);
@@ -1132,7 +1132,7 @@ void loop() {
     }
   }
 
-  // shake → dizzy + force scenario advance
+  // shake â†’ dizzy + force scenario advance
   if (now - lastShakeCheck > 50) {
     lastShakeCheck = now;
     if (!_onUsb && !menuOpen && !screenOff && checkShake() && (int32_t)(now - oneShotUntil) >= 0) {
@@ -1152,7 +1152,7 @@ void loop() {
       promptArrivedMs = millis();
       wake();
       beep(1200, 80);   // alert chirp
-      // Jump to the approval screen no matter what was open — drawApproval
+      // Jump to the approval screen no matter what was open â€” drawApproval
       // only runs from drawHUD which only runs in DISP_NORMAL.
       displayMode = DISP_NORMAL;
       menuOpen = settingsOpen = resetOpen = false;
@@ -1165,7 +1165,7 @@ void loop() {
   bool inPrompt = tama.promptId[0] && !responseSent;
 
   // Button-press wake. Track which button woke the screen so its full
-  // press cycle (including long-press) is swallowed — you don't want
+  // press cycle (including long-press) is swallowed â€” you don't want
   // BtnA-to-wake to also cycle displayMode or open the menu.
   if (M5.BtnA.isPressed() || M5.BtnB.isPressed()) {
     if (screenOff) {
@@ -1229,7 +1229,7 @@ void loop() {
     swallowBtnA = false;
   }
 
-  // BtnB: pet → heart
+  // BtnB: pet â†’ heart
   if (M5.BtnB.wasPressed()) {
     if (swallowBtnB) { swallowBtnB = false; }
     else
@@ -1269,7 +1269,7 @@ void loop() {
   // by the bridge. Pet sleeps underneath. Exit restores Y via
   // applyDisplayMode() so the next mode-switch isn't visually offset.
   clockRefreshRtc();   // 1Hz internal throttle; also caches _onUsb
-  // Show the clock when nothing is happening — bridge heartbeat alone
+  // Show the clock when nothing is happening â€” bridge heartbeat alone
   // doesn't count as activity (it's the only way to get the RTC synced).
   bool clocking = displayMode == DISP_NORMAL
                && !menuOpen && !settingsOpen && !resetOpen && !inPrompt
@@ -1310,7 +1310,7 @@ void loop() {
   lastPasskey = pk;
 
   if (napping || screenOff || landscapeClock) {
-    // skip sprite render — face-down, powered off, or landscape clock
+    // skip sprite render â€” face-down, powered off, or landscape clock
     // (which draws direct-to-LCD below)
   } else if (buddyMode) {
     buddyTick(activeState);
@@ -1354,7 +1354,7 @@ void loop() {
   }
 
   // Face-down nap: dim immediately, pause animations, accumulate sleep time.
-  // Skipped during approval — you're holding it to read, not sleeping it.
+  // Skipped during approval â€” you're holding it to read, not sleeping it.
   // Exit needs sustained not-down so IMU noise at the threshold doesn't
   // bounce brightness between 8 and full every few frames.
   static int8_t faceDownFrames = 0;
@@ -1377,8 +1377,8 @@ void loop() {
   }
 
   // millis() not the cached `now`: wake() runs after `now` is captured,
-  // so now - lastInteractMs underflows when a button is held → flicker.
-  // No auto-off on USB power — clock face wants to stay visible while charging.
+  // so now - lastInteractMs underflows when a button is held â†’ flicker.
+  // No auto-off on USB power â€” clock face wants to stay visible while charging.
   if (!screenOff && !inPrompt && !_onUsb
       && millis() - lastInteractMs > SCREEN_OFF_MS) {
     M5.Lcd.sleep();
@@ -1387,3 +1387,4 @@ void loop() {
 
   delay(screenOff ? 100 : 16);
 }
+
