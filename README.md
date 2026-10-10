@@ -149,12 +149,6 @@ Wait for `[SUCCESS]`.
 
 > Close Claude Desktop first, then plug the stick in over USB-C.
 
-```powershell
-pio run -e m5stickc-plus -t upload
-```
-
-Wait for `[SUCCESS]`, then unplug and replug the stick.
-
 If the stick has old firmware and behaves oddly, wipe it first:
 
 ```powershell
@@ -163,6 +157,8 @@ pio run -e m5stickc-plus -t upload
 ```
 
 You can also factory reset from the device: hold **A → Settings → Reset → Factory Reset**, then tap twice to confirm.
+
+Wait for `[SUCCESS]`, then unplug and replug the stick.
 
 **5. Flash the clawdie pack over USB**
 
