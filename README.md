@@ -17,6 +17,16 @@
 </p>
 
 ---
+> This is a fork of [anthropics/claude-desktop-buddy](https://github.com/anthropics/claude-desktop-buddy) adapted for the M5StickC Plus2.
+
+Claude for macOS and Windows can connect Claude Cowork and Claude Code to maker devices over BLE, so developers and makers can build hardware that displays permission prompts, recent messages, and other interactions. We've been impressed by the creativity of the maker community around Claude - providing a lightweight, opt-in API is our way of making it easier to build fun little hardware devices that integrate with Claude.
+
+> **Building your own device?** You don't need any of the code here. See **[REFERENCE.md](https://github.com/anthropics/claude-desktop-buddy/blob/main/REFERENCE.md)** for the wire protocol: Nordic UART Service UUIDs, JSON schemas, and the folder push transport.
+
+As an example, we built a desk pet on ESP32 that lives off permission approvals and interaction with Claude. It sleeps when nothing's happening, wakes when sessions start, gets visibly impatient when an approval prompt is waiting, and lets you approve or deny right from the device.
+
+---
+
 ## What's Here
 
 ```
