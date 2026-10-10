@@ -170,3 +170,4 @@ The stick shows **busy** for 10 seconds, then **attention** for 10 seconds, then
 
 - Firmware base: [anthropics/claude-desktop-buddy](https://github.com/anthropics/claude-desktop-buddy)
 - Clawdie sprite: adapted from [bryant24hao/deskpet-firmware](https://github.com/bryant24hao/deskpet-firmware)
+- Built with help from Claude (Anthropic).
